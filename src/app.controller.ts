@@ -22,4 +22,9 @@ export class AppController {
   getFacturaById(@Param("id") id: number): Promise<FacturaEntity> {
     return this.appService.getFacturaById(id);
   }
+
+  @Get("facturas")
+  getAll(): Promise<FacturaEntity[]> {
+    return this.appService.getAll();
+  }
 }

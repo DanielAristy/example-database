@@ -40,7 +40,7 @@ export class AppService {
       await queryRunner.rollbackTransaction();
       throw new HttpException(
         'No se puede eliminar esta factura' + error,
-        HttpStatus.CONFLICT,
+        HttpStatus.NOT_FOUND,
       );
     }
   }
@@ -58,11 +58,21 @@ export class AppService {
     if (!factura) {
       throw new HttpException(
         'No existe esta factura con id ' + id,
-        HttpStatus.CONFLICT,
+        HttpStatus.NOT_FOUND,
       );
     }
-
     return Promise.resolve(factura);
-      
+  }
+
+  async getAll() : Promise<FacturaEntity[]> {
+    const queryRunner = this.datasoruce.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    const facturas = await queryRunner.manager.find(FacturaEntity,{
+      relations: {detalleFactura: true},
+    });
+
+    return Promise.resolve(facturas);
   }
 }
